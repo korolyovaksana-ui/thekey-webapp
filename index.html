@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>The Key — Concierge</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#B8960C;--gold-light:#D4AF37;--bg:#0A0A0A;--bg2:#111;--bg3:#1A1A1A;--text:#F0EBE0;--muted:#888}
+body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-height:100vh;overflow-x:hidden}
+.header{padding:24px 20px 16px;text-align:center;border-bottom:1px solid rgba(184,150,12,.2)}
+.logo{font-size:22px;letter-spacing:6px;color:var(--gold);font-weight:300;text-transform:uppercase}
+.tagline{font-size:11px;letter-spacing:3px;color:var(--muted);margin-top:6px;text-transform:uppercase}
+.greeting{padding:14px 20px 6px;font-size:13px;color:var(--muted);text-align:center;letter-spacing:1px}
+.menu{padding:10px 16px 24px}
+.section-title{font-size:10px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin:18px 0 10px 4px;opacity:.7}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+.grid.single{grid-template-columns:1fr}
+.btn{background:var(--bg3);border:1px solid rgba(184,150,12,.18);border-radius:12px;padding:16px 12px;cursor:pointer;text-align:center;transition:all .18s;-webkit-tap-highlight-color:transparent;position:relative;overflow:hidden}
+.btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(184,150,12,.06),transparent);opacity:0;transition:opacity .18s}
+.btn:active{transform:scale(.96);border-color:var(--gold);background:#1E1A0A}
+.btn:active::before{opacity:1}
+.btn .icon{font-size:24px;margin-bottom:8px;display:block}
+.btn .label{font-size:12px;color:var(--text);letter-spacing:.5px;line-height:1.4}
+.btn.highlight{border-color:rgba(184,150,12,.4);background:linear-gradient(135deg,#1A1500,var(--bg3))}
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(184,150,12,.2),transparent);margin:8px 0 16px}
+.back-btn{display:none;padding:10px 20px;text-align:left}
+.back-btn button{background:none;border:none;color:var(--gold);font-size:13px;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;gap:8px}
+.back-btn button::before{content:'←';font-size:16px}
+.submenu{display:none;padding:0 16px 24px}
+.submenu.active{display:block}
+.main-menu.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo">THE KEY</div>
+  <div class="tagline">Concierge · Tashkent</div>
+</div>
+<div class="greeting" id="greeting">Добро пожаловать</div>
+
+<!-- MAIN MENU -->
+<div class="main-menu" id="mainMenu">
+  <div class="menu">
+    <div class="section-title">Сервисы</div>
+    <div class="grid">
+      <div class="btn" onclick="open_sub('restaurant')"><span class="icon">🍽️</span><span class="label">Ресторан и еда</span></div>
+      <div class="btn" onclick="open_sub('transfer')"><span class="icon">🚗</span><span class="label">Трансфер</span></div>
+      <div class="btn" onclick="open_sub('hotel')"><span class="icon">🏨</span><span class="label">Отель</span></div>
+      <div class="btn" onclick="open_sub('events')"><span class="icon">🎭</span><span class="label">Мероприятия</span></div>
+      <div class="btn" onclick="open_sub('shopping')"><span class="icon">🛍️</span><span class="label">Шопинг</span></div>
+      <div class="btn" onclick="open_sub('travel')"><span class="icon">✈️</span><span class="label">Поездки и туры</span></div>
+      <div class="btn" onclick="open_sub('spa')"><span class="icon">💆</span><span class="label">СПА и красота</span></div>
+      <div class="btn" onclick="open_sub('documents')"><span class="icon">🏛️</span><span class="label">Документы и право</span></div>
+      <div class="btn" onclick="open_sub('lifestyle')"><span class="icon">🏠</span><span class="label">Быт и комфорт</span></div>
+      <div class="btn" onclick="send_action('service_other')"><span class="icon">🔄</span><span class="label">Другое</span></div>
+    </div>
+    <div class="divider"></div>
+    <div class="grid">
+      <div class="btn highlight" onclick="send_action('my_requests')"><span class="icon">📋</span><span class="label">Мои заявки</span></div>
+      <div class="btn" onclick="send_action('about')"><span class="icon">ℹ️</span><span class="label">О сервисе</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- SUBMENUS -->
+<div class="back-btn" id="backBtn"><button onclick="go_back()">Главное меню</button></div>
+
+<div class="submenu" id="sub_restaurant">
+  <div class="section-title" style="padding:14px 4px 10px">Ресторан и еда</div>
+  <div class="grid single">
+    <div class="btn" onclick="send_action('rest_book')"><span class="icon">📅</span><span class="label">Забронировать столик</span></div>
+    <div class="btn" onclick="send_action('rest_popular')"><span class="icon">⭐</span><span class="label">Популярные рестораны</span></div>
+    <div class="btn" onclick="open_sub('cuisine')"><span class="icon">🌐</span><span class="label">Подобрать по кухне</span></div>
+  </div>
+</div>
+
+<div class="submenu" id="sub_cuisine">
+  <div class="section-title" style="padding:14px 4px 10px">Выберите кухню</div>
+  <div class="grid">
+    <div class="btn" onclick="send_action('cuisine_uzbek')"><span class="icon">🥘</span><span class="label">Узбекская</span></div>
+    <div class="btn" onclick="send_action('cuisine_japanese')"><span class="icon">🍱</span><span class="label">Японская</span></div>
+    <div class="btn" onclick="send_action('cuisine_european')"><span class="icon">🍝</span><span class="label">Европейская</span></div>
+    <div class="btn" onclick="send_action('cuisine_other')"><span class="icon">🌍</span><span class="label">Другая кухня</span></div>
+  </div>
+</div>
+
+<div class="submenu" id="sub_transfer">
+  <div class="section-title" style="padding:14px 4px 10px">Трансфер</div>
+  <div class="grid single">
+    <div class="btn" onclick="send_action('transfer_airport')"><span class="icon">✈️</span><span class="label">Трансфер в аэропорт</span></div>
+    <div class="btn" onclick="send_action('transfer_city')"><span class="icon">🚗</span><span class="label">По городу</span></div>
+    <div class="btn" onclick="send_action('transfer_intercity')"><span class="icon">🛣️</span><span class="label">Межгородской</span></div>
+    <div class="btn" onclick="send_action('transfer_group')"><span class="icon">👥</span><span class="label">Групповой</span></div>
+  </div>
+</div>
+
+<div class="submenu" id="sub_hotel">
+  <div class="section-title" style="padding:14px 4px 10px">Отель и проживание</div>
+  <div class="grid single">
+    <div class="btn" onclick="send_action('hotel_luxury')"><span class="icon">💎</span><span class="label">Люкс-отель</span></div>
+    <div class="btn" onclick="send_action('hotel_standard')"><span class="icon">🏨</span><span class="label">Стандарт</span></div>
+    <div class="btn" onclick="send_action('hotel_apartments')"><span class="icon">🏠</span><span class="label">Апартаменты</span></div>
+  </div>
+</div>
+
+<div class="submenu" id="sub_events">
+  <div class="section-title" style="padding:14px 4px 10px">Мероприятия</div>
+  <div class="grid">
+    <div class="btn" onclick="send_action('event_concert')"><span class="icon">🎵</span><span class="label">Концерт</span></div>
+    <div class="btn" onclick="send_action('event_theater')"><span class="icon">🎭</span><span class="label">Театр</span></div>
+    <div class="btn" onclick="send_action('event_sport')"><span class="icon">⚽</span><span class="label">Спорт</span></div>
+    <div class="btn" onclick="send_action('event_other')"><span class="icon">🎪</span><span class="label">Другое</span></div>
+  </div>
+</div>
+
+<div class="submenu" id="sub_shopping">
+  <div class="section-title" style="padding:14px 4px 10px">Шопинг</div>
+  <div class="grid">
+    <div class="btn" onclick="send_action('shop_fashion')"><span class="icon">👗</span><span class="label">Одежда / Мода</span></div>
+    <div class="btn" onclick="send_action('shop_jewelry')"><span class="icon">💎</span><span class="label">Ювелирные</span></div>
+    <div class="btn" onclick="send_action('shop_gifts')"><span class="icon">🎁</span><span class="label">Подарки</span></div>
+    <div class="btn" onclick="send_action('shop_stylist')"><span class="icon">✨</span><span class="label">Стилист</span></div>
+    <div class="btn" onclick="send_action('shop_exclusive')"><span class="icon">💍</span><span class="label">Эксклюзив</span></div>
+  </div>
+</div>
+
+<div class="submenu" id="sub_travel">
+  <div class="section-title" style="padding:14px 4px 10px">Поездки и туры</div>
+  <div class="grid single">
+    <div class="btn" onclick="send_action('travel_tashkent')"><span class="icon">🗺️</span><span class="label">Экскурсия — Ташкент</span></div>
+    <div class="btn" onclick="send_action('travel_uzbekistan')"><span class="icon">🏛️</span><span class="label">Тур по Узбекистану</span></div>
+    <div class="btn" onclick="send_action('travel_abroad')"><span class="icon">🌍</span><span class="label">Туры за рубеж</span></div>
+    <div class="btn" onclick="send_action('travel_visa')"><span class="icon">🎫</span><span class="label">Визовая поддержка</span></div>
+    <div class="btn" onclick="send_action('travel_flight')"><span class="icon">✈️</span><span class="label">Билеты на самолёт</span></div>
+    <div class="btn" onclick="send_action('travel_train')"><span class="icon">🚄</span><span class="label">Билеты на поезд</span></div>
+    <div class="btn" onclick="send_action('travel_lounge')"><span class="icon">🛋️</span><span class="label">Бизнес-зал / Fast Track</span></div>
+  </div>
+</div>
+
+<div class="submenu" id="sub_spa">
+  <div class="section-title" style="padding:14px 4px 10px">СПА и красота</div>
+  <div class="grid single">
+    <div class="btn" onclick="send_action('spa_procedures')"><span class="icon">💆</span><span class="label">СПА-процедуры</span></div>
+    <div class="btn" onclick="send_action('spa_hair')"><span class="icon">💇</span><span class="label">Парикмахерская / Стилист</span></div>
+    <div class="btn" onclick="send_action('spa_nails')"><span class="icon">💅</span><span class="label">Ногтевой сервис</span></div>
+  </div>
+</div>
+
+<div class="submenu" id="sub_documents">
+  <div class="section-title" style="padding:14px 4px 10px">Документы и право</div>
+  <div class="grid single">
+    <div class="btn" onclick="send_action('docs_preparation')"><span class="icon">📄</span><span class="label">Подготовка документов</span></div>
+    <div class="btn" onclick="send_action('docs_banking')"><span class="icon">🏦</span><span class="label">Банковские вопросы</span></div>
+    <div class="btn" onclick="send_action('docs_legal')"><span class="icon">⚖️</span><span class="label">Юридические услуги</span></div>
+    <div class="btn" onclick="send_action('docs_corporate')"><span class="icon">🏢</span><span class="label">Корпоративные услуги</span></div>
+    <div class="btn" onclick="send_action('docs_notary')"><span class="icon">📝</span><span class="label">Нотариальные услуги</span></div>
+    <div class="btn" onclick="send_action('docs_tax')"><span class="icon">💼</span><span class="label">Налоговые вопросы</span></div>
+    <div class="btn" onclick="send_action('docs_realty')"><span class="icon">🏘️</span><span class="label">Недвижимость</span></div>
+  </div>
+</div>
+
+<div class="submenu" id="sub_lifestyle">
+  <div class="section-title" style="padding:14px 4px 10px">Быт и комфорт</div>
+  <div class="grid">
+    <div class="btn" onclick="send_action('life_cleaning')"><span class="icon">🧹</span><span class="label">Уборка</span></div>
+    <div class="btn" onclick="send_action('life_laundry')"><span class="icon">👕</span><span class="label">Стирка / химчистка</span></div>
+    <div class="btn" onclick="send_action('life_food')"><span class="icon">🍕</span><span class="label">Заказ еды</span></div>
+    <div class="btn" onclick="send_action('life_grocery')"><span class="icon">🛒</span><span class="label">Продукты</span></div>
+    <div class="btn" onclick="send_action('life_repair')"><span class="icon">🔧</span><span class="label">Ремонт и мастера</span></div>
+    <div class="btn" onclick="send_action('life_nanny')"><span class="icon">👶</span><span class="label">Няня / помощник</span></div>
+    <div class="btn" onclick="send_action('life_party')"><span class="icon">🎉</span><span class="label">Организация события</span></div>
+  </div>
+</div>
+
+<script>
+const tg = window.Telegram.WebApp;
+tg.ready();
+tg.expand();
+
+// Greet by name
+const user = tg.initDataUnsafe?.user;
+if (user) {
+  const name = user.first_name || 'Гость';
+  document.getElementById('greeting').textContent = 'Добро пожаловать, ' + name;
+}
+
+let history = [];
+
+function open_sub(name) {
+  document.getElementById('mainMenu').classList.add('hidden');
+  document.querySelectorAll('.submenu').forEach(s => s.classList.remove('active'));
+  const sub = document.getElementById('sub_' + name);
+  if (sub) { sub.classList.add('active'); }
+  document.getElementById('backBtn').style.display = 'block';
+  history.push(name);
+  window.scrollTo(0, 0);
+}
+
+function go_back() {
+  history.pop();
+  document.querySelectorAll('.submenu').forEach(s => s.classList.remove('active'));
+  if (history.length === 0) {
+    document.getElementById('mainMenu').classList.remove('hidden');
+    document.getElementById('backBtn').style.display = 'none';
+  } else {
+    const prev = history[history.length - 1];
+    const sub = document.getElementById('sub_' + prev);
+    if (sub) sub.classList.add('active');
+  }
+  window.scrollTo(0, 0);
+}
+
+function send_action(action) {
+  tg.sendData(action);
+}
+</script>
+</body>
+</html>
