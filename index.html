@@ -1,47 +1,14 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>The Key</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{
-  background:#0A0A0A;color:#F0EBE0;
-  font-family:'Georgia',serif;min-height:100vh;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;padding:32px 24px;
-}
-.logo{font-size:28px;letter-spacing:8px;color:#D4AF37;
-  text-transform:uppercase;font-weight:300;margin-bottom:10px;}
-.divider{width:60px;height:1px;
-  background:linear-gradient(90deg,transparent,#D4AF37,transparent);
-  margin:0 auto 12px;}
-.tagline{font-size:11px;letter-spacing:3px;color:#888;
-  text-transform:uppercase;margin-bottom:48px;}
-.btn-menu{
-  background:linear-gradient(135deg,#1A1500,#111);
-  border:1px solid rgba(212,175,55,.4);border-radius:14px;
-  padding:18px 40px;color:#D4AF37;font-family:'Georgia',serif;
-  font-size:15px;letter-spacing:2px;text-transform:uppercase;
-  cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;}
-.btn-menu:active{transform:scale(.96);border-color:#D4AF37;}
-.hint{margin-top:20px;font-size:11px;color:#555;
-  letter-spacing:1px;text-align:center;}
-</style>
 </head>
 <body>
-<div class="logo">THE KEY</div>
-<div class="divider"></div>
-<div class="tagline">Concierge · Tashkent</div>
-<button class="btn-menu" onclick="openMenu()">Открыть меню</button>
-<div class="hint">Меню откроется в чате</div>
 <script>
-const tg = window.Telegram.WebApp;
-tg.ready();
-tg.expand();
-function openMenu() { tg.sendData("show_menu"); }
+  const tg = window.Telegram.WebApp;
+  tg.ready();
+  tg.sendData("show_menu");
 </script>
 </body>
 </html>
